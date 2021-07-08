@@ -1,46 +1,32 @@
 #! /bin/bash
-#Author : - Shashank Srivastava
-#Date : - 18 September, 2017
+#Author : - Bibhuti Narayan
+#Date : - July 2021
 
-#Checking if this script is being executed as ROOT. For maintaining proper directory structure, this script must be run from a root user.
-if [ $EUID != 0 ]
+#Checking URL list provide or not to check SSL validity.
+if [ $# != 0 ]
 then
-  echo "Please run this script as root so as to see all details! Better run with sudo."
+  echo "Please provide URL list as a argument."
   exit 1
 fi
 
-#Declaring variables
-#set -x
-os_name=`uname -v | awk {'print$1'} | cut -f2 -d'-'`
-upt=`uptime | awk {'print$3'} | cut -f1 -d','`
-ip_add=`ifconfig | grep "inet addr" | head -2 | tail -1 | awk {'print$2'} | cut -f2 -d:`
-num_proc=`ps -ef | wc -l`
-root_fs_pc=`df -h /dev/sda1 | tail -1 | awk '{print$5}'`
-root_fs_pc_numeric=`df -h /dev/sda1 | tail -1 | awk '{print$5}' | cut -f1 -d'%'`
-total_root_size=`df -h /dev/sda1 | tail -1 | awk '{print$2}'`
-#load_avg=`uptime | cut -f5 -d':'`
-load_avg=`cat /proc/loadavg  | awk {'print$1,$2,$3'}`
-ram_usage=`free -m | head -2 | tail -1 | awk {'print$3'}`
-ram_total=`free -m | head -2 | tail -1 | awk {'print$2'}`
-ram_pc=`echo "scale=2; $ram_usage / $ram_total * 100" | bc | cut -f1 -d '.'`
-inode=`df -i / | head -2 | tail -1 | awk {'print$5'}`
-inode_numeric=`df -i / | head -2 | tail -1 | awk {'print$5'} | cut -f1 -d '%'`
-os_version=`uname -v | cut -f2 -d'~' | awk {'print$1'} | cut -f1 -d'-' | cut -c 1-5`
-num_users=`who | wc -l`
-cpu_free=`top b -n1 | head -5 | head -3 | tail -1 | awk '{print$8}' | cut -f1 -d ','`
-last_reboot=`who -b | awk '{print$3, $4}'`
+#Check openssl installed or not
+whereis openssl
+if [ $? != 0 ]
+then
+  echo "Required package "openssl" not installed or configured."
+  exit 1
+fi
+
 
 #Creating a directory if it doesn't exist to store reports first, for easy maintenance.
-if [ ! -d ${HOME}/health_reports ]
+if [ ! -d ${PWD}/url_reports ]
 then
-  mkdir ${HOME}/health_reports
+  mkdir ${PWD}/url_reports
 fi
-html="${HOME}/health_reports/Server-Health-Report-`hostname`-`date +%y%m%d`-`date +%H%M`.html"
+html="${PWD}/url_reports/url-Report-`date +%y%m%d`-`date +%H%M`.html"
 email_add="change this to yours"
-for i in `ls /home`; do sudo du -sh /home/$i/* | sort -nr | grep G; done > /tmp/dir.txt
-ps aux | awk '{print$2, $4, $6, $11}' | sort -k3rn | head -n 10 > /tmp/memstat.txt
 
-#url_list
+#url checking from given list
 url_list=$1
 rm -rf /tmp/url_ssl_list.txt
 while read line; do
@@ -125,17 +111,12 @@ echo "</tbody>" >> $html
 echo "</table>" >> $html
 
 echo "<br>" >> $html
-echo "<h2><span class=\"label label-primary\">Pictorial Data : </span></h2>" >> $html
-echo "<center><div id="chart_div"></div></center>" >> $html
 echo -e "<br>
-<div class=\"panel panel-primary\" style=\"width: 40%;\">
-<div class=\"panel-heading\">
-</center>
-</div>
-</div>" >> $html
+
+</center> >> $html
 echo "</body>" >> $html
 echo "</html>" >> $html
-echo "Report has been generated in ${HOME}/health_reports with file-name = $html. Report has also been sent to $email_add."
+echo "Report has been generated in ${PWD}/url_reports with file-name = $html. Report has also been sent to $email_add."
 #Sending Email to the user
-cat $html | mail -s "`hostname` - Daily System Health Report" -a "MIME-Version: 1.0" -a "Content-Type: text/html" -a "From: Shashank Srivastava <root@shashank.com>" $email_add
+cat $html | mail -s "`hostname` - Daily System Health Report" -a "MIME-Version: 1.0" -a "Content-Type: text/html" -a "From: Bibhuti Narayan <root@localhost>" $email_add
 
