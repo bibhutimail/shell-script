@@ -1,4 +1,4 @@
-#! /bin/bash
+  #! /bin/bash
 #Author : - Bibhuti Narayan
 #Date : - July 2021
 
@@ -111,12 +111,9 @@ echo "</tbody>" >> $html
 echo "</table>" >> $html
 
 echo "<br>" >> $html
-echo -e "<br>
-
-</center> >> $html
+echo "</center>" >> $html
 echo "</body>" >> $html
 echo "</html>" >> $html
 echo "Report has been generated in ${PWD}/url_reports with file-name = $html. Report has also been sent to $email_add."
 #Sending Email to the user
 cat $html | mail -s "`hostname` - Daily System Health Report" -a "MIME-Version: 1.0" -a "Content-Type: text/html" -a "From: Bibhuti Narayan <root@localhost>" $email_add
-
