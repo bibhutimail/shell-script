@@ -10,7 +10,7 @@ then
 fi
 
 #Check openssl installed or not
-whereis openssl
+whereis openssl &>/dev/null &
 if [ $? != 0 ]
 then
   echo "Required package "openssl" not installed or configured."
@@ -116,4 +116,4 @@ echo "</body>" >> $html
 echo "</html>" >> $html
 echo "Report has been generated in ${PWD}/url_reports with file-name = $html. Report has also been sent to $email_add."
 #Sending Email to the user
-cat $html | mail -s "`hostname` - Daily System Health Report" -a "MIME-Version: 1.0" -a "Content-Type: text/html" -a "From: Bibhuti Narayan <root@localhost>" $email_add
+#cat $html | mail -s "`hostname` - Daily System Health Report" -a "MIME-Version: 1.0" -a "Content-Type: text/html" -a "From: Bibhuti Narayan <root@localhost>" $email_add
