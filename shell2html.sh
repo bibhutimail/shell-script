@@ -3,6 +3,7 @@
 #Date : - July 2021
 
 #Checking URL list provide or not to check SSL validity.
+echo $#
 if [ $# != 0 ]
 then
   echo "Please provide URL list as a argument."
