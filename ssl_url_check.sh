@@ -96,7 +96,7 @@ echo "<tbody>" >> $html
 echo "<tr>" >> $html
 while read url days comments remarks;
 do
-if [ $days -lt 70 ]
+if [ $days -lt 30 ]
 then
 echo "<td style="background-color:#FF0000" > $url " >> $html
 else
